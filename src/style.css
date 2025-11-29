@@ -1,0 +1,25 @@
+.body-bg {
+    background: linear-gradient(90deg, rgb(62, 197, 238), rgb(4, 117, 161));
+    
+}
+
+header {
+    color: white;
+}
+
+.pbody {
+    background: linear-gradient(135deg, #69b3ff, #3b8fd8);
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.search {
+    /* margin-top: 20px;
+    max-width: 600px; */
+    margin-left: auto;
+    margin-right: auto;
+    border: solid 1px black;
+    border-radius: 25px;
+}
