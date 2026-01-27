@@ -8,7 +8,7 @@
     --card-shadow: #00000042;
 }
 
-/* ---------------- GLOBAL ---------------- */
+/* GLOBAL */
 
 * {
     box-sizing: border-box;
@@ -24,7 +24,7 @@ body {
     min-height: 100vh;
 }
 
-/* ---------------- SEARCH ---------------- */
+/* SEARCH */
 
 .search {
     border: solid 1px var(--black);
@@ -32,7 +32,7 @@ body {
     max-width: 500px;
 }
 
-/* ---------------- MAIN CARD ---------------- */
+/* MAIN CARD */
 
 .p-body,
 .w-detail div,
@@ -66,6 +66,8 @@ body {
     height: auto;
 }
 
+/* WEATHER DETAILS */
+
 .w-detail div {
     margin: 20;
     padding: 15px;
@@ -73,6 +75,8 @@ body {
     border-left: var(--white) solid 4px;
     flex: 1 1 150px;
 }
+
+/* 5 DAY FORECAST */
 
 .s-body {
     flex-direction: column;
@@ -95,6 +99,8 @@ body {
     font-size: 1.1rem;
 }
 
+/* MOBILE */
+
 @media (max-width: 768px) {
     .search {
         width: 90%;
@@ -113,6 +119,8 @@ body {
         align-items: stretch;
     }
 }
+
+/* VERY SMALL SCREENS */
 
 @media (max-width: 400px) {
     h2 {
