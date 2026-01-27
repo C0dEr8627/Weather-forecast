@@ -34,6 +34,28 @@ async function fetchWeatherData(city) {
     return response.json();
 }
 
+// Fetch AQI
+async function fetchAQI(lat, lon) {
+  const API_KEY = '4b66811a783e865846c0dc50b4d0648e';
+  const url = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+  
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Failed to fetch AQI');
+  
+  const data = await response.json();
+  // AQI is in data.list[0].main.aqi (1=Good, 5=Very Poor)
+  return data.list[0].main.aqi;
+}
+
+// Map AQI numbers to descriptive labels
+const aqiLabels = {
+    1: 'Good',
+    2: 'Fair',
+    3: 'Moderate',
+    4: 'Poor',
+    5: 'Very Poor'
+};
+
 // Map icons
 function fetchImage(iconCode) {
     const iconMap = {
@@ -64,80 +86,96 @@ function fetchImage(iconCode) {
 // weatherIconElement.src = iconPath;
 // weatherIconElement.alt = current.weather[0].description;
 
-// Update UI
 async function updateWeather(city) {
     try {
         const data = await fetchWeatherData(city);
+        if (!data || data.cod !== "200" && data.cod !== 200) {
+            alert('No data found for the city.');
+            return;
+        }
 
-        const current = data.list[0];
+        // Extract useful info
+        const weatherData = data.list[0];
         const cityData = data.city;
+        const main = weatherData.main;
+        const weather = weatherData.weather[0];
+        const wind = weatherData.wind;
+        const sys = cityData;  // For sunset time, city object has no sys, so use first list's sys instead
+        const dt = weatherData.dt;
 
-        // Location / date / time
+        // Get lat, lon for AQI fetch
+        const lat = cityData.coord.lat;
+        const lon = cityData.coord.lon;
+
+        // Fetch AQI data
+        const aqiValue = await fetchAQI(lat, lon);
+        const aqiText = aqiLabels[aqiValue] || 'N/A';
+
+        // Update current weather details
         locationElement.innerHTML = `<i class="bi-geo-alt"></i> ${cityData.name}, ${cityData.country}`;
-        dateElement.innerHTML = `<i class="bi-calendar"></i> ${new Date(current.dt * 1000).toLocaleDateString()}`;
-        timeElement.innerHTML = `<i class="bi-clock"></i> ${new Date(current.dt * 1000).toLocaleTimeString()}`;
+        dateElement.innerHTML = `<i class="bi-calendar"></i> ${new Date(dt * 1000).toLocaleDateString()}`;
+        timeElement.innerHTML = `<i class="bi-clock"></i> ${new Date(dt * 1000).toLocaleTimeString()}`;
 
-        // Temperature & description
-        temperatureElement.innerHTML = `<i class="bi-thermometer"></i> ${current.main.temp}°C`;
-        aqiElement.innerHTML = `<i class="bi-cloud-haze"></i> ${current.weather[0].description}`;
+        temperatureElement.innerHTML = `<i class="bi-thermometer"></i> ${main.temp}°C`;
+        aqiElement.innerHTML = `<i class="bi-cloud-haze"></i> AQI: ${aqiText}`;
 
-        // Icon
-        const iconPath = `assets/${fetchImage(current.weather[0].icon)}`;
+        // Weather icon
+        const iconPath = `assets/${fetchImage(weather.icon)}`;
         weatherIconElement.src = iconPath;
-        weatherIconElement.alt = current.weather[0].description;
 
-        // Extra details
-        humidityElement.innerHTML = `<i class="bi-droplet"></i> Humidity: ${current.main.humidity}%`;
-        uvIndexElement.innerHTML = `<i class="bi-sun"></i> UV Index: N/A`;
-        airPressureElement.innerHTML = `<i class="bi-bar-chart-line"></i> Air Pressure: ${current.main.pressure} hPa`;
-        sunsetElement.innerHTML = `<i class="bi-sunset"></i> Sunset: ${new Date(cityData.sunset * 1000).toLocaleTimeString()}`;
-        weatherTypeElement.innerHTML = current.weather[0].main;
-        windSpeedElement.innerHTML = `<i class="bi-wind"></i> Wind Speed: ${current.wind.speed} m/s`;
+        // Additional weather details
+        humidityElement.innerHTML = `<i class="bi-droplet"></i> Humidity: ${main.humidity}%`;
+        uvIndexElement.innerHTML = `<i class="bi-sun"></i> UV Index: N/A`;  // UV Index requires another API call
+        airPressureElement.innerHTML = `<i class="bi-bar-chart-line"></i> Air Pressure: ${main.pressure} hPa`;
 
-        // 5-day forecast (proper way)
-forecastContainer.innerHTML = '';
+        // Sunset time: the city object doesn’t have sunset, get it from first weatherData.sys (if available)
+        const sunsetUnix = data.city.sunset || weatherData.sys?.sunset;
+        sunsetElement.innerHTML = `<i class="bi-sunset"></i> Sunset: ${
+            sunsetUnix ? new Date(sunsetUnix * 1000).toLocaleTimeString() : 'N/A'}`;
 
-const dailyMap = {};
+        weatherTypeElement.innerHTML = `${weather.main}`;
+        windSpeedElement.innerHTML = `<i class="bi-wind"></i> Wind Speed: ${wind.speed} m/s`;
 
-data.list.forEach(item => {
-    const date = new Date(item.dt * 1000).toDateString();
+        // Update 5-day forecast
+        forecastContainer.innerHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            const forecast = data.list[i * 8] || data.list[data.list.length - 1]; // fallback last item
+            const date = new Date(forecast.dt * 1000).toLocaleDateString();
+            const temp = forecast.main.temp;
+            const humidity = forecast.main.humidity;
+            const iconCode = forecast.weather[0].icon;
+            const description = forecast.weather[0].description;
 
-    // Pick first forecast of each day (around noon if possible)
-    if (!dailyMap[date]) {
-        dailyMap[date] = item;
-    }
-});
-
-const days = Object.values(dailyMap).slice(1, 6); // next 5 days
-
-days.forEach((forecast, index) => {
-    const div = document.createElement('div');
-    div.classList.add(`day${index + 1}`);
-
-    div.innerHTML = `
-        <p>${new Date(forecast.dt * 1000).toLocaleDateString()}</p>
-        <p><i class="bi-thermometer"></i> ${forecast.main.temp}°C</p>
-        <p>${forecast.weather[0].description}</p>
-        <p><i class="bi-droplet"></i> ${forecast.main.humidity}%</p>
-        <img src="assets/icons/${fetchImage(forecast.weather[0].icon)}" alt="">
-    `;
-
-    forecastContainer.appendChild(div);
-});
-
+            const dayDiv = document.createElement('div');
+            dayDiv.classList.add(`day${i}`);
+            dayDiv.innerHTML = `
+                <p>${date}</p>
+                <p><i class="bi-thermometer"></i> ${temp}°C</p>
+                <p><i class="bi-cloud-haze"></i> ${description}</p>
+                <p><i class="bi-droplet"></i> Humidity: ${humidity}%</p>
+                <img src="assets/${fetchImage(iconCode)}" alt="Weather Icon">
+            `;
+            forecastContainer.appendChild(dayDiv);
+        }
 
     } catch (error) {
         alert(error.message);
-        console.error(error);
+        console.error("Error:", error);
     }
 }
 
-// Events
+// Event listeners
 searchButton.addEventListener('click', () => {
     const city = searchInput.value.trim();
-    if (city) updateWeather(city);
+    if (city) {
+        updateWeather(city);
+    } else {
+        alert('Please enter a city name.');
+    }
 });
 
 searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') searchButton.click();
+    if (e.key === 'Enter') {
+        searchButton.click();
+    }
 });
