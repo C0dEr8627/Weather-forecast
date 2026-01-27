@@ -60,6 +60,10 @@ function fetchImage(iconCode) {
     return iconMap[iconCode] || 'default.png';
 }
 
+// const iconPath = `assets/${fetchImage(current.weather[0].icon)}`;
+// weatherIconElement.src = iconPath;
+// weatherIconElement.alt = current.weather[0].description;
+
 // Update UI
 async function updateWeather(city) {
     try {
@@ -78,7 +82,9 @@ async function updateWeather(city) {
         aqiElement.innerHTML = `<i class="bi-cloud-haze"></i> ${current.weather[0].description}`;
 
         // Icon
-        weatherIconElement.src = `assets/icons/${fetchImage(current.weather[0].icon)}`;
+        const iconPath = `assets/${fetchImage(current.weather[0].icon)}`;
+        weatherIconElement.src = iconPath;
+        weatherIconElement.alt = current.weather[0].description;
 
         // Extra details
         humidityElement.innerHTML = `<i class="bi-droplet"></i> Humidity: ${current.main.humidity}%`;
