@@ -102,7 +102,6 @@ body {
 }
 
 /* MOBILE */
-
 @media (max-width: 768px) {
     .s-body, .p-body {
         margin: 10px;          /* Reduce outer margin */
@@ -113,38 +112,60 @@ body {
         width: 90%;
     }
 
-    .days {
-        display: block;
-    }
-
-    .days div {
-        width: 100%;
-        margin: 8px 0;         /* Reduce vertical spacing between cards */
-        padding: 10px;         /* Reduce padding inside cards */
-    }
-
-    .p-body, .w-detail {
-        flex-direction: column;
-        align-items: center;
-        padding: 10px;         /* Reduce padding inside main and details sections */
+    /* Weather details: 3 columns of equal width */
+    .w-detail {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
     }
 
     .w-detail div {
-        margin: 5px 0;         /* Reduce spacing between small cards */
-        padding: 8px;          /* Slightly smaller padding */
+        margin: 0;             /* reset margin for grid */
+        padding: 10px;
+        flex: unset;           /* remove flex settings */
     }
 
+    /* 5-day forecast: 2 columns of equal width */
+    .days {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .days div {
+        width: 100%;           /* make cards full width of grid cell */
+        margin: 0;
+        padding: 10px;         /* slightly smaller padding */
+    }
+
+    /* Adjust main cards layout */
+    .p-body {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .p-body > div {
+        flex: 1 1 48%;         /* roughly 2 per row */
+        text-align: center;
+    }
+
+    /* Text & icon sizes for mobile */
     .col1 p, .col2 p, .col3 img {
-        font-size: 0.9rem;     /* Slightly smaller text for mobile */
+        font-size: 0.9rem;
+    }
+
+    .col3 img {
+        max-width: 80px;
     }
 
     .w-detail p, .days p {
-        font-size: 0.85rem;    /* Adjust text size inside detail and forecast cards */
+        font-size: 0.85rem;
     }
 }
 
 /* VERY SMALL SCREENS */
-
 @media (max-width: 400px) {
     h2 {
         font-size: 1.4rem;
