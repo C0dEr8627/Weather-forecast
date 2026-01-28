@@ -1,11 +1,20 @@
 :root {
-    --body-background-1: #3EC5EE;
-    --body-background-2: #03729E;
+    /* Base palette from your image */
+    --color-1: #392f66;  /* Dark Purple */
+    --color-2: #8ad8ff;  /* Light Sky Blue */
+    --color-3: #7aafd9;  /* Medium Blue */
+    --color-4: #52477a;  /* Muted Purple */
+    --color-5: #3b2e66;  /* Deep Purple */
+
     --white: #ffffff;
     --black: #000000;
-    --card-bgcolor: #5080ff;
-    --days-card-bg: #2D7D7F;
-    --card-shadow: #00000042;
+
+    /* Set default theme colors from palette */
+    --body-background-1: var(--color-2);  /* Light Sky Blue */
+    --body-background-2: var(--color-3);  /* Medium Blue */
+    --card-bgcolor: var(--color-5);       /* Deep Purple for cards */
+    --days-card-bg: var(--color-4);       /* Muted Purple for forecast cards */
+    --card-shadow: rgba(0, 0, 0, 0.3);
 }
 
 /* GLOBAL */
@@ -19,9 +28,8 @@ body {
 }
 
 .body-bg {
-    background: linear-gradient(90deg, var(--body-background-1), var(--body-background-2)); 
+    background: linear-gradient(90deg, var(--body-background-1), var(--body-background-2));
     color: var(--white);
-    min-height: 100vh;
 }
 
 /* SEARCH */
@@ -29,7 +37,6 @@ body {
 .search {
     border: solid 1px var(--black);
     border-radius: 25px;
-    max-width: 500px;
 }
 
 /* MAIN CARD */
@@ -42,7 +49,7 @@ body {
     border-left: var(--white) solid 4px;
     padding: 20px;
     margin: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 12px var(--card-shadow);
 }
 
 /* Allow wrapping */
@@ -52,6 +59,14 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+}
+
+.days div {
+    background-color: var(--days-card-bg);
+    border-radius: 15px;
+    border-left: var(--white) solid 3px;
+    padding: 1.5rem;
+    text-align: center;
 }
 
 /* Columns auto-adjust */
@@ -99,6 +114,10 @@ body {
 
 .s-body p {
     font-size: 1.1rem;
+}
+
+h2, p {
+    color: var(--white);
 }
 
 /* MOBILE */
@@ -170,6 +189,7 @@ body {
     h2 {
         font-size: 1.4rem;
     }
+
     .days div {
         padding: 1rem;
     }
