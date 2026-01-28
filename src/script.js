@@ -88,6 +88,10 @@ function fetchImage(iconCode) {
 
 async function updateWeather(city) {
     try {
+        // START loading UI
+        searchButton.innerHTML = `<span class="spinner-border spinner-border-sm"></span>`;
+        searchButton.disabled = true;
+        // fetch + update UI
         const data = await fetchWeatherData(city);
         if (!data || data.cod !== "200" && data.cod !== 200) {
             alert('No data found for the city.');
@@ -161,6 +165,11 @@ async function updateWeather(city) {
     } catch (error) {
         alert(error.message);
         console.error("Error:", error);
+    }
+    finally {
+        // END loading UI
+        searchButton.innerHTML = `<i class="bi bi-search"></i>`;
+        searchButton.disabled = false;
     }
 }
 
