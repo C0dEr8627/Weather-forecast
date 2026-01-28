@@ -73,11 +73,27 @@ body {
 }
 
 .p-body:hover,
+.p-body:active,
 .w-detail div:hover,
-.days div:hover {
+.w-detail div:active,
+.days div:hover,
+.days div:active {
     transform: translateY(-6px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
 }
+
+.p-body,
+.w-detail div,
+.days div {
+    will-change: transform;
+}
+
+.p-body:active,
+.w-detail div:active,
+.days div:active {
+    transform: scale(0.97);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.35);
+}
+
 
 /* Allow wrapping */
 .p-body,
@@ -108,10 +124,13 @@ body {
     height: auto;
     display: block;
     margin: 0 auto;
+    animation: float 4s ease-in-out infinite;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
-/* WEATHER DETAILS */
 
+/* WEATHER DETAILS */
 .w-detail div {
     margin: 20;
     padding: 15px;
