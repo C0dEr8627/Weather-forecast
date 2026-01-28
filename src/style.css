@@ -5,6 +5,7 @@
     --color-3: #7aafd9;
     --color-4: #52477a;
     --color-5: #3b2e66;
+    --button-bg: var(--color-4);
 
     --white: #ffffff;
     --black: #000000;
@@ -49,7 +50,7 @@ body {
 }
 
 .search-btn {
-    background: var(--color-4);
+    background: var(--button-bg);
     color: var(--white);
     border: none;
     cursor: pointer;
@@ -60,8 +61,11 @@ body {
     .search-btn:hover {
         background: var(--color-1);
         transform: scale(1.05);
+        filter: brightness(1.1);
+        transform: scale(1.05);
     }
 }
+
 
 /* CARD BASE */
 .p-body,

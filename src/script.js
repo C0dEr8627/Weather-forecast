@@ -21,6 +21,38 @@ const windSpeedElement = document.querySelector('.wind-speed p');
 // Forecast container
 const forecastContainer = document.querySelector('.days');
 
+// Weather color themes
+const weatherThemes = {
+    Clear: {
+        bg1: '#fddb92',
+        bg2: '#d1fdff',
+        card: '#ffb703',
+        subCard: '#ffd166',
+        button: '#fb8500'
+    },
+    Clouds: {
+        bg1: '#bdc3c7',
+        bg2: '#2c3e50',
+        card: '#3a4f7a',
+        subCard: '#4b6584',
+        button: '#576574'
+    },
+    Rain: {
+        bg1: '#4e54c8',
+        bg2: '#8f94fb',
+        card: '#2c2f7f',
+        subCard: '#3f51b5',
+        button: '#1e3799'
+    },
+    Snow: {
+        bg1: '#e0eafc',
+        bg2: '#cfdef3',
+        card: '#b6d0e2',
+        subCard: '#dbe9f4',
+        button: '#74b9ff'
+    }
+};
+
 // Fetch weather data
 async function fetchWeatherData(city) {
     const API_KEY = '4b66811a783e865846c0dc50b4d0648e';
@@ -32,6 +64,18 @@ async function fetchWeatherData(city) {
     }
 
     return response.json();
+}
+
+// Change weather theme
+function applyWeatherTheme(weatherType) {
+    const theme = weatherThemes[weatherType] || weatherThemes.Clouds;
+    const root = document.documentElement;
+
+    root.style.setProperty('--body-background-1', theme.bg1);
+    root.style.setProperty('--body-background-2', theme.bg2);
+    root.style.setProperty('--card-bgcolor', theme.card);
+    root.style.setProperty('--days-card-bg', theme.subCard);
+    root.style.setProperty('--button-bg', theme.button);
 }
 
 // Fetch AQI
@@ -139,7 +183,8 @@ async function updateWeather(city) {
 
         weatherTypeElement.innerHTML = `${weather.main}`;
         windSpeedElement.innerHTML = `<i class="bi-wind"></i> Wind Speed: ${wind.speed} m/s`;
-
+        
+        applyWeatherTheme(weather.main);
         // Update 5-day forecast
         forecastContainer.innerHTML = '';
         for (let i = 1; i <= 5; i++) {
